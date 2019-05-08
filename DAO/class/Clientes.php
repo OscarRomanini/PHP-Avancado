@@ -8,6 +8,28 @@ class Clientes{
     private $nome;
     private $idade;
     private $sexo;
+    private $login;
+    private $senha;
+
+    public function getLogin()
+    {
+        return $this->login;
+    }
+
+    public function setLogin($login): void
+    {
+        $this->login = $login;
+    }
+
+    public function getSenha()
+    {
+        return $this->senha;
+    }
+
+    public function setSenha($senha): void
+    {
+        $this->senha = $senha;
+    }
 
     public function getSexo()
     {
@@ -60,6 +82,42 @@ class Clientes{
             $this->setNome($row['nome']);
             $this->setIdade($row['idade']);
             $this->setSexo($row['sexo']);
+            $this->setLogin($row['login']);
+            $this->setSenha($row['senha']);
+
+        }
+
+    }
+
+    public static function getList(){
+        $sql = new Sql();
+        return $sql->select("SELECT * FROM clientes ORDER BY nome");
+    }
+
+    public static function search($nome){
+        $sql = new Sql();
+        return $sql->select("SELECT * FROM clientes WHERE nome LIKE :SEARCH ORDER BY nome", array(
+            ":SEARCH" => "%".$nome."%"
+        ));
+    }
+
+    public function login($login, $senha)
+    {
+        $sql = new Sql();
+        $result = $sql->select("SELECT * FROM clientes WHERE login = :LOGIN AND senha = :SENHA ", array(
+            ":LOGIN" => $login,
+            ":SENHA" => $senha
+        ));
+        if (count($result) > 0){
+            $row = $result[0];
+            $this->setId($row['id']);
+            $this->setNome($row['nome']);
+            $this->setIdade($row['idade']);
+            $this->setSexo($row['sexo']);
+            $this->setLogin($row['login']);
+            $this->setSenha($row['senha']);
+        }else{
+            throw new Exception("Login e/ou senha inválidos!");
         }
 
     }
@@ -70,9 +128,12 @@ class Clientes{
             "ID:" => $this->getId(),
             "NOME:" => $this->getNome(),
             "IDADE:" => $this->getIdade(),
-            "SEXO:" => $this->getSexo()
+            "SEXO:" => $this->getSexo(),
+            "LOGIN:" => $this->getLogin(),
+            "SENHA:" => $this->getSenha()
        ));
     }
+
 
 
 }
