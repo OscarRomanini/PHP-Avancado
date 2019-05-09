@@ -77,14 +77,7 @@ class Clientes{
             ":ID" => $id
         ));
         if (count($result) > 0){
-            $row = $result[0];
-            $this->setId($row['id']);
-            $this->setNome($row['nome']);
-            $this->setIdade($row['idade']);
-            $this->setSexo($row['sexo']);
-            $this->setLogin($row['login']);
-            $this->setSenha($row['senha']);
-
+            $this->setData($result[0]);
         }
 
     }
@@ -109,17 +102,53 @@ class Clientes{
             ":SENHA" => $senha
         ));
         if (count($result) > 0){
-            $row = $result[0];
-            $this->setId($row['id']);
-            $this->setNome($row['nome']);
-            $this->setIdade($row['idade']);
-            $this->setSexo($row['sexo']);
-            $this->setLogin($row['login']);
-            $this->setSenha($row['senha']);
+           $this->setData($result[0]);
         }else{
             throw new Exception("Login e/ou senha inválidos!");
         }
+    }
 
+    public function insert(){
+        $sql = new Sql();
+        $result =  $sql->select("CALL clientes_insert(:NOME, :SEXO, :IDADE, :LOGIN, :SENHA)",array(
+            ":NOME" => $this->getNome(),
+            ":IDADE" => $this->getIdade(),
+            ":SEXO" => $this->getSexo(),
+            ":LOGIN" => $this->getLogin(),
+            ":SENHA" => $this->getSenha()
+        ));
+        if (count($result) > 0){
+            $this->setData($result[0]);
+        }
+    }
+
+    public function update($nome, $idade, $sexo, $login, $senha){
+        $this->setNome($nome);
+        $this->setIdade($idade);
+        $this->setSexo($sexo);
+        $this->setLogin($login);
+        $this->setSenha($senha);
+
+        $sql = new Sql();
+
+        $sql->query("UPDATE clientes SET nome = :NOME, idade = :IDADE, sexo = :SEXO, login = :LOGIN
+        , senha = :SENHA WHERE id = :ID",array(
+            ":ID" => $this->getId(),
+            ":NOME" => $this->getNome(),
+            ":IDADE" => $this->getIdade(),
+            ":SEXO" => $this->getSexo(),
+            ":LOGIN" => $this->getLogin(),
+            ":SENHA" => $this->getSenha()
+        ));
+    }
+
+    public function setData($data){
+        $this->setId($data['id']);
+        $this->setNome($data['nome']);
+        $this->setIdade($data['idade']);
+        $this->setSexo($data['sexo']);
+        $this->setLogin($data['login']);
+        $this->setSenha($data['senha']);
     }
 
     public function __toString()
